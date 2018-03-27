@@ -57,7 +57,6 @@ app.get('/restraunt/:id',(req,res)=>{
 });
 
 app.delete('/restraunt/:id',(req,res)=>{
-
     var id = req.params.id;
     if(!ObjectID.isValid(id)){
         return res.status(404).send('the id is Invalid');
@@ -85,6 +84,18 @@ app.put('/restraunt/:id',(req,res)=>{
     },(e)=>{
         res.status(404).send(e);
     });
+});
+app.post('/users',(req,res)=>{
+    var body = _.pick(req.body,['email','password'])
+    var user1 = new User(body);
+
+    user1.save().then(()=>{
+        return user1.generateAuthToken();
+    }).then((token)=>{
+        res.header('x-auth',token).send(user1);
+    }).catch((e)=>{
+        res.status(400).send(e);
+    })
 })
 
 app.listen(port, () => {
